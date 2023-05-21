@@ -1,0 +1,113 @@
+import pandas as pd
+import numpy as np
+ColumnNames  = ['Hours','Calories','Weight']
+DataValues = [[1.0,2500,95],
+             [2.0,2000,85],
+             [2.5,1900,83],
+             [3.0,1850,81],
+             [3.5,1600,80],
+             [4.0,1500,78],
+             [5.0,1500,77],
+             [5.5,1600,80],
+             [6.0,1700,75],
+             [6.5,1500,70]]
+              
+ 
+GymData=pd.DataFrame(data=DataValues,columns=ColumnNames)
+GymData.head()
+              
+ 
+TargetVariable  ='Weight'
+Predictors = ['Hours','Calories']
+X = GymData[Predictors].values
+y = GymData[TargetVariable].values
+ 
+    
+AccuracyValues=[]
+n_times=5
+ 
+    
+for i in range(n_times):
+     
+    from sklearn.model_selection import train_test_split
+   
+    X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=101)
+    
+    
+    
+    from sklearn import tree
+     
+    RegModel = tree.DecisionTreeRegressor(max_depth=3,criterion='squared_error')
+    
+     
+    DTree  = RegModel.fit(X_train,y_train)
+    prediction=DTree.predict(X_test)
+    
+     
+    Accuracy  = 100-(np.mean(np.abs((y_test - prediction)/y_test))*100)
+    
+     
+    AccuracyValues.append(np.round(Accuracy))
+    
+ 
+print(AccuracyValues)
+
+ 
+print('Final average accuracy',np.mean(AccuracyValues))
+
+
+
+
+
+
+
+
+
+
+ 
+def Accuracy_Score(orig,pred):
+    MAPE=np.mean(100*(np.abs(orig-pred)/orig))
+    #print ('#'*70,'Accuracy:',100-MAPE)
+    return (100-MAPE)
+
+ 
+from sklearn.metrics import make_scorer
+custom_Scoring = make_scorer(Accuracy_Score,greater_is_better=True)
+
+ 
+from sklearn.model_selection import cross_val_score
+
+ 
+from sklearn import tree
+ 
+RegModel = tree.DecisionTreeRegressor(max_depth=3,criterion='squared_error')
+
+ 
+Accuracy_Values=cross_val_score(RegModel,X,y,cv=10,scoring=custom_Scoring)
+print('\nAccuracy values for 10-fold Cross Validation : \n',Accuracy_Values)
+print('\nFinal Average Accuracy of the model : ',round(Accuracy_Values.mean(),2))
+
+
+
+
+
+
+
+
+ 
+from sklearn.model_selection import train_test_split
+     
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.5,random_state=0)
+
+ 
+from sklearn import tree
+  
+RegModel = tree.DecisionTreeRegressor(max_depth=3,criterion='squared_error')
+
+ 
+DTree=RegModel.fit(X_train,y_train)
+prediction=DTree.predict(X_test)
+
+ 
+Accuracy=100-(np.mean(np.abs((y_test-prediction)/y_test))*100)
+print(Accuracy)

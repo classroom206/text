@@ -1,0 +1,115 @@
+import pandas as pd
+import numpy as np
+
+
+df = pd.read_csv("Iris (1).csv")
+
+
+df.head()
+
+
+dummies = pd.get_dummies(df.Species)
+dummies
+
+
+
+Iris = pd.concat([df, dummies], axis = 'columns')
+Iris.head()
+
+
+
+Iris.drop(['Species'], axis = 'columns')
+Iris
+
+
+
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+iris_1 = df
+iris_1.Species = le.fit_transform(iris_1.Species)
+iris_1
+
+
+
+df.describe()
+
+
+
+
+import matplotlib.pyplot as plt
+x = df['Petal Width ']
+plt.hist(x)
+plt.show
+
+
+df['Petal category'] = pd.cut(df['Petal Width '], bins = [0, 1, 2, 2.5], labels = ['small', 'medium', 'long']) 
+print(df['Petal category'])
+print(df['Petal category'].value_counts())
+
+
+
+from sklearn.preprocessing import OrdinalEncoder
+encoder = OrdinalEncoder()
+df['Petal category'] = encoder.fit_transform(df[['Petal category']])
+df
+
+
+
+import matplotlib.pyplot as plt
+from sklearn import datasets
+from sklearn.decomposition import PCA
+df = datasets.load_iris()
+df
+
+
+
+x = df.data
+y = df.target
+print(x.shape, y.shape)
+
+
+
+pca = PCA(n_components = 2)
+pca.fit(x)
+
+
+pca.components_
+
+
+
+z = pca.transform(x)
+z.shape
+
+
+
+plt.scatter(z[:, 0], z[:, 1], c = y)
+
+
+pca.explained_variance_ratio_
+
+
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+lda = LinearDiscriminantAnalysis(n_components = 2)
+x_r2 = lda.fit(x, y).transform(x)
+
+
+lda.explained_variance_ratio_
+
+
+clrs = ['red', 'green', 'blue', 'yellow']
+vectorizer = np.vectorize(lambda x: clrs[x % len(clrs)])
+plt.scatter(x_r2[:, 0], x_r2[:, 1], c = vectorizer(y))
+
+
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+iris = pd.read_csv('Iris (1).csv')
+
+
+sns.pairplot(iris.drop(['Id'], axis = 1), hue = 'Species', height = 2)
+
+
+
+sns.heatmap(iris.corr(method = 'pearson').drop(['Id'], axis = 1).drop(['Id'], axis = 0), annot = True)
